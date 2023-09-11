@@ -1,0 +1,64 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: artemis-broker
+spec:
+  deploymentPlan:
+    size: 2
+    requireLogin: true
+    persistenceEnabled: true
+    journalType: nio
+    messageMigration: true
+    storage:
+      size: 1Gi
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+      requests:
+        cpu: "1000m"
+        memory: "2Gi"
+  console:
+    expose: true
+  acceptors:
+    - name: core
+      port: 61616
+      protocols: core
+    - name: core-tls
+      port: 61617
+      protocols: core
+      expose: true
+      sslEnabled: true
+      sslSecret: artemis-broker-tls-secret
+    - name: amqp
+      port: 5672
+      protocols: amqp
+    - name: amqp-tls
+      port: 5673
+      protocols: amqp
+      expose: true
+      sslEnabled: true
+      sslSecret: artemis-broker-tls-secret
+  addressSettings:
+    applyRule: merge_all
+    addressSetting:
+      - match: "#"
+        redistributionDelay: 5000
+  brokerProperties:
+    - "globalMaxSize=1GiB"
+    - "clusterConfigurations.my-cluster.messageLoadBalancingType=OFF_WITH_REDISTRIBUTION"
+    - "connectorConfigurations.dc1-federation-connector.params.host=${DC1_HOST}"
+    - "connectorConfigurations.dc1-federation-connector.params.port=${DC1_PORT}"
+    - "connectorConfigurations.dc1-federation-connector.params.sslEnabled=true"
+    - "connectorConfigurations.dc1-federation-connector.params.trustStorePath=/etc/artemis-broker-tls-secret-volume/client.ts"
+    - "connectorConfigurations.dc1-federation-connector.params.trustStorePassword=password"
+    - "federationConfigurations.dc2-to-dc1.credentials.user=${DC1_USER}"
+    - "federationConfigurations.dc2-to-dc1.credentials.password=${DC1_PASS}"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.connectionConfiguration.staticConnectors=dc1-federation-connector"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.connectionConfiguration.retryInterval=500"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.connectionConfiguration.retryIntervalMultiplier=2"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.connectionConfiguration.maxRetryInterval=30000"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.connectionConfiguration.circuitBreakerTimeout=30000"
+    - "federationConfigurations.dc2-to-dc1.upstreamConfigurations.dc1.policyRefs=app-qp"
+    - "federationConfigurations.dc2-to-dc1.queuePolicies.app-qp.includeFederated=false"
+    - "federationConfigurations.dc2-to-dc1.queuePolicies.app-qp.includes.all-app.queueMatch=app.#"
