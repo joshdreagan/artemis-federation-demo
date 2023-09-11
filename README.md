@@ -1,5 +1,7 @@
 # Artemis Federation Demo
 
+![Artemis Federation Demo - Architecture](img/architecture.png)
+
 ## TLS
 
 Create the DC1 and DC2 keystores.
@@ -8,7 +10,7 @@ Create the DC1 and DC2 keystores.
 env \
 BROKER_NAME=artemis-broker \
 BROKER_COUNT=2 \
-DOMAIN=apps.cluster-mbbxw.mbbxw.sandbox2095.opentlc.com \
+DOMAIN=apps.cluster-zz9jt.zz9jt.sandbox2715.opentlc.com \
 NAMESPACE=dc1 \
 KEYSTORE=./tls/dc1-broker-keystore.jks \
 KEYSTORE_PASS=password \
@@ -17,7 +19,7 @@ KEYSTORE_PASS=password \
 env \
 BROKER_NAME=artemis-broker \
 BROKER_COUNT=2 \
-DOMAIN=apps.cluster-mbbxw.mbbxw.sandbox2095.opentlc.com \
+DOMAIN=apps.cluster-zz9jt.zz9jt.sandbox2715.opentlc.com \
 NAMESPACE=dc2 \
 KEYSTORE=./tls/dc2-broker-keystore.jks \
 KEYSTORE_PASS=password \
@@ -86,12 +88,12 @@ oc create secret generic -n dc1 artemis-broker-tls-secret --from-file=broker.ks=
 oc apply -n dc1 -f ./dc1/artemis-security.yaml
 
 #
-# Modify the broker cluster CR with your environment specific details and apply. Make sure to use the `${STATEFUL_SET_ORDINAL}` placeholder in your host string so that the federation applies properly (ie, ordinal-0 -> ordinal-0, ordinal-1 -> ordinal-1, ... etc).
+# Modify the broker cluster CR with your environment specific details and apply. Make sure to use the `${STATEFUL_SET_ORDINAL}` placeholder in your host string so that the federation applies properly (ie, ordinal-0 -> ordinal-0, ordinal-1 -> ordinal-1, ... etc). You can retrieve the generated admin password for the DC2 cluster via the web console, or via the following command `oc get secret -n dc2 security-properties-broker-prop-module -o=jsonpath='{.data.admin}' | base64 -d`. However, you must have applied the `artemis-security.yaml` in DC2 for this secret to have been generated. So you might have to hop back and forth between DC's just a bit.
 env \
-DC2_HOST='artemis-broker-core-tls-${STATEFUL_SET_ORDINAL}-svc-rte-dc2.apps.cluster-mbbxw.mbbxw.sandbox2095.opentlc.com' \
+DC2_HOST='artemis-broker-core-tls-${STATEFUL_SET_ORDINAL}-svc-rte-dc2.apps.cluster-zz9jt.zz9jt.sandbox2715.opentlc.com' \
 DC2_PORT=443 \
 DC2_USER=admin \
-DC2_PASS='5QpAZVQO' \
+DC2_PASS='4CrF5Ulk' \
 bash -c 'cat ./dc1/artemis-broker.yaml | envsubst | oc apply -n dc1 -f-'
 
 #
@@ -121,12 +123,12 @@ oc create secret generic -n dc2 artemis-broker-tls-secret --from-file=broker.ks=
 oc apply -n dc2 -f ./dc2/artemis-security.yaml
 
 #
-# Modify the broker cluster CR with your environment specific details and apply. Make sure to use the `${STATEFUL_SET_ORDINAL}` placeholder in your host string so that the federation applies properly (ie, ordinal-0 -> ordinal-0, ordinal-1 -> ordinal-1, ... etc).
+# Modify the broker cluster CR with your environment specific details and apply. Make sure to use the `${STATEFUL_SET_ORDINAL}` placeholder in your host string so that the federation applies properly (ie, ordinal-0 -> ordinal-0, ordinal-1 -> ordinal-1, ... etc). You can retrieve the generated admin password for the DC1 cluster via the web console, or via the following command `oc get secret -n dc1 security-properties-broker-prop-module -o=jsonpath='{.data.admin}' | base64 -d`. However, you must have applied the `artemis-security.yaml` in DC1 for this secret to have been generated. So you might have to hop back and forth between DC's just a bit.
 env \
-DC1_HOST='artemis-broker-core-tls-${STATEFUL_SET_ORDINAL}-svc-rte-dc1.apps.cluster-mbbxw.mbbxw.sandbox2095.opentlc.com' \
+DC1_HOST='artemis-broker-core-tls-${STATEFUL_SET_ORDINAL}-svc-rte-dc1.apps.cluster-zz9jt.zz9jt.sandbox2715.opentlc.com' \
 DC1_PORT=443 \
 DC1_USER=admin \
-DC1_PASS='5QpAZVQO' \
+DC1_PASS='lIZmbMVg' \
 bash -c 'cat ./dc2/artemis-broker.yaml | envsubst | oc apply -n dc2 -f-'
 
 #
