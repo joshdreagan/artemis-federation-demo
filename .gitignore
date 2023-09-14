@@ -1,1 +1,3 @@
-tls/*.*
+manual-tls/tls/*.*
+skupper/dc1/token.yaml
+skupper/dc2/token.yaml

@@ -1,0 +1,9 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemisAddress
+metadata:
+  name: app-foo
+spec:
+  addressName: app.foo
+  queueName: app.foo
+  routingType: anycast
+  removeFromBrokerOnDelete: true
