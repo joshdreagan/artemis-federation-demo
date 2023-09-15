@@ -1,6 +1,6 @@
-# Artemis Federation Demo - Mutual TLS
+# Artemis Federation Demo - Manual TLS
 
-![Artemis Federation Demo - Mutual TLS - Architecture](img/architecture.png)
+![Artemis Federation Demo - Manual TLS - Architecture](img/architecture.png)
 
 ## TLS
 
