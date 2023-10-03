@@ -112,8 +112,8 @@ oc apply -n dc2 -f ./dc2/artemis-addresses.yaml
 # Expose the services to the Skupper network.
 for i in {0..1};
 do
-  oc -n dc1 annotate service artemis-broker-core-$i-svc "skupper.io/address=artemis-broker-core-$i-svc-dc1" "skupper.io/port=61616" "skupper.io/proxy=tcp"
-  oc -n dc1 annotate service artemis-broker-amqp-$i-svc "skupper.io/address=artemis-broker-amqp-$i-svc-dc1" "skupper.io/port=5672" "skupper.io/proxy=tcp"
+  oc -n dc1 annotate service artemis-broker-core-$i-svc "skupper.io/address=artemis-broker-core-$i-svc-dc2" "skupper.io/port=61616" "skupper.io/proxy=tcp"
+  oc -n dc1 annotate service artemis-broker-amqp-$i-svc "skupper.io/address=artemis-broker-amqp-$i-svc-dc2" "skupper.io/port=5672" "skupper.io/proxy=tcp"
 done;
 ```
 
